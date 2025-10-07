@@ -1,0 +1,161 @@
+COLLECTION:
+
+db.sales.aggregate([
+  {
+    $lookup: {
+      from: "products",
+      localField: "ProductID",
+      foreignField: "ProductID",
+      as: "Product"
+    }
+  },
+  { $unwind: "$Product" },
+
+  {
+    $lookup: {
+      from: "categories",
+      localField: "Product.CategoryID",
+      foreignField: "CategoryID",
+      as: "Category"
+    }
+  },
+  { $unwind: "$Category" },
+
+  {
+    $lookup: {
+      from: "customers",
+      localField: "CustomerID",
+      foreignField: "CustomerID",
+      as: "Customer"
+    }
+  },
+  { $unwind: "$Customer" },
+
+  {
+    $lookup: {
+      from: "cities",
+      localField: "Customer.CityID",
+      foreignField: "CityID",
+      as: "City"
+    }
+  },
+  { $unwind: "$City" },
+
+  {
+    $lookup: {
+      from: "countries",
+      localField: "City.CountryID",
+      foreignField: "CountryID",
+      as: "Country"
+    }
+  },
+  { $unwind: "$Country" },
+
+  {
+    $lookup: {
+      from: "employees",
+      localField: "SalesPersonID",
+      foreignField: "EmployeeID",
+      as: "Employee"
+    }
+  },
+  { $unwind: "$Employee" },
+
+ {
+    $lookup: {
+      from: "cities",
+      localField: "Employee.CityID",
+      foreignField: "CityID",
+      as: "City1"
+    }
+  },
+  { $unwind: "$City1" },
+
+  {
+    $lookup: {
+      from: "countries",
+      localField: "City1.CountryID",
+      foreignField: "CountryID",
+      as: "Country1"
+    }
+  },
+  { $unwind: "$Country1" },
+
+  {
+    $project: {
+      SalesID: 1,
+      Quantity: 1,
+      Discount: 1,
+      TotalPrice: 1,
+      SalesDate: 1,
+      TransactionNumber: 1,
+      Product: {
+        ProductID: "$Product.ProductID",
+        ProductName: "$Product.ProductName",
+        Price: "$Product.Price",
+        CategoryID: "$Product.CategoryID",
+        CategoryName: "$Category.CategoryName"
+      },
+      Customer: {
+        CustomerID: "$Customer.CustomerID",
+        FirstName: "$Customer.FirstName",
+        LastName:"$Customer.LastName",
+        CityID: "$Customer.CityID",
+        CityName: "$City.CityName",
+        CountryID: "$City.CountryID",                 
+        CountryName: "$Country.CountryName"        
+      },
+      Employee: {
+          
+        EmployeeID: "$Employee.EmployeeID",   
+        FirstName: "$Employee.FirstName",
+        LastName:"$Employee.LastName",
+        HireDate:"$Employee.Hiredate",
+        CityID: "$Employee.CityID",       
+        CityName: "$City1.CityName",
+        CountryID: "$City1.CountryID",           
+        CountryName: "$Country1.CountryName" 
+      }
+
+
+    }
+  },
+
+  { $merge: { into: "sales_flat3" } }
+])
+
+INDEXES:
+
+// single indexes
+db.sales_flat3.createIndex({ "Product.ProductName": 1 }, { name: "Product.ProductName_1" });
+db.sales_flat3.createIndex({ "Customer.CityName": 1 },   { name: "Customer.CityName_1" });
+db.sales_flat3.createIndex({ "Product.CategoryName": 1 },{ name: "Product.CategoryName_1" });
+db.sales_flat3.createIndex({ "Customer.CustomerID": 1 }, { name: "Customer.CustomerID_1" });
+db.sales_flat3.createIndex({ "SalesDate": 1 },           { name: "SalesDate_1" });
+db.sales_flat3.createIndex({ "Employee.EmployeeID": 1 }, { name: "Employee.EmployeeID_1" });
+
+// compound indexes 
+db.sales_flat3.createIndex(
+  { "Customer.CityName": 1, "Product.ProductName": 1 },
+  { name: "Customer.CityName_1_Product.ProductName_1" }
+);
+
+db.sales_flat3.createIndex(
+  { "Customer.CityName": 1, "Product.ProductName": 1, "Quantity": 1 },
+  { name: "Customer.CityName_1_Product.ProductName_1_Quantity_1" }
+);
+
+db.sales_flat3.createIndex(
+  { "Product.CategoryName": 1, "Product.Price": 1 },
+  { name: "Product.CategoryName_1_Product.Price_1" }
+);
+
+db.sales_flat3.createIndex(
+  { "Product.CategoryName": 1, "Employee.EmployeeID": 1 },
+  { name: "Product.CategoryName_1_Employee.EmployeeID_1" }
+);
+
+db.sales_flat3.createIndex(
+  { "Product.CategoryName": 1, "Customer.CityName": 1, "Quantity": 1 },
+  { name: "Product.CategoryName_1_Customer.CityName_1_Quantity_1" }
+);

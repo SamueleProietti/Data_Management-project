@@ -1,0 +1,22 @@
+Q1) Top 10 categories by number of customers served per employee 1
+Q2) Top 10 cities by number of unique employees who sold in the Meat category
+Q3) Revenue per Product in Dallas
+Q4) Price Distribution in the “Meat” Category
+Q5) Top 10 Customers in Tucson
+Q6) Least Sold Product in San Diego
+Q7) Top 10 Customers by Number of Distinct Products Purchased
+Q8) Top 10 employees by total revenue in the Beverages category 
+Q9) Top 10 employees by distinct products sold in Cereals category
+Q10) Average discount per city in January 2018 
+Q11) Top 5 products purchased by the customer 1(by quantity)
+Q12) Number of sales of Scampi Tail for each city
+Q13) Total quantity of products belonging to a category sold in each city
+Q14) Number of sales of products that cost less than 30.5$ for Baltimore
+Q15) Revenue made by employees for selling Kiwi or Beef
+Q16) Customer and date when he/she bought more than 19 units of a Produce product
+Q17) Top 5 products (by number of sales) in Buffalo
+Q18) Number of sales of each Dairy product for each city
+Q19) Number of times an employee in Lincoln has served each customer
+Q20) Years of employment of each employee
+Q21) Category and total units sold for each product
+Q22) Top 10 products by number of unique customers in New York
