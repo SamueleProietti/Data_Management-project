@@ -30,5 +30,5 @@ We designed Python scripts to execute the selected queries on both PostgreSQL an
 
 The project presentation slides in PDF format can be accessed through the following link:
 
-- [Project Presentation Slides (PDF)]()
+- [Project Presentation Slides (PDF)](https://github.com/SamueleProietti/Data_Management-project/blob/main/MongoDB-vs-PostgreSQL.pdf)
 
