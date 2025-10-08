@@ -133,6 +133,7 @@ db.sales_flat3.createIndex({ "Product.CategoryName": 1 },{ name: "Product.Catego
 db.sales_flat3.createIndex({ "Customer.CustomerID": 1 }, { name: "Customer.CustomerID_1" });
 db.sales_flat3.createIndex({ "SalesDate": 1 },           { name: "SalesDate_1" });
 db.sales_flat3.createIndex({ "Employee.EmployeeID": 1 }, { name: "Employee.EmployeeID_1" });
+db.seles_flat3.createIndex({ "Product.Price": 1 },       { name: "Product.Price_1" });
 
 // compound indexes 
 db.sales_flat3.createIndex(
@@ -159,3 +160,4 @@ db.sales_flat3.createIndex(
   { "Product.CategoryName": 1, "Customer.CityName": 1, "Quantity": 1 },
   { name: "Product.CategoryName_1_Customer.CityName_1_Quantity_1" }
 );
+
