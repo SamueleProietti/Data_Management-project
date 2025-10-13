@@ -1,0 +1,57 @@
+Q6) Least Sold Product in San Diego
+
+MongoDB->
+db.sales_flat3.aggregate([
+  { $match: { "Customer.CityName": "San Diego" } },                                   
+  { $group: {
+      _id: "$Product.ProductName",
+      qty: { $sum: "$Quantity" }
+  }},
+  { $sort: { qty: 1, _id: 1 } },                               
+  { $limit: 1 },
+  { $project: { _id: 0, City: "San Diego", Product: "$_id", QuantitySold: "$qty" } }
+], { hint: { "Customer.CityName": 1, "Product.ProductName": 1 }, allowDiskUse: true })
+
+PostgreSQL->
+SELECT
+  'San Diego' AS city,
+  p.productname AS product,
+  SUM(s.quantity) AS quantitysold
+FROM sales s
+JOIN customers cu ON cu.customerid = s.customerid
+JOIN cities ci     ON ci.cityid     = cu.cityid
+JOIN products p    ON p.productid   = s.productid
+WHERE ci.cityname = 'San Diego'
+GROUP BY p.productname
+ORDER BY quantitysold ASC, product ASC
+LIMIT 1;
+---------------------------------------------------------------------------------------------------------------------------------
+Q7) Top 10 Customers by Number of Distinct Products Purchased
+
+MongoDB->
+db.sales_flat3.aggregate([
+  { $group: {
+      _id: "$Customer.CustomerID",
+      products: { $addToSet: "$Product.ProductID" },
+      firstname: { $first: "$Customer.FirstName" },
+      lastname:  { $first: "$Customer.LastName" }
+  }},
+  { $project: {
+      customerid: "$_id",
+      firstname: 1,
+      lastname: 1,
+      distinct_products: { $size: "$products" },
+      _id: 0
+  }},
+  { $sort: { distinct_products: -1 } },
+  { $limit: 10 }
+])
+
+PostgreSQL->
+SELECT cu.customerid, cu.firstname, cu.lastname,
+       COUNT(DISTINCT s.productid) AS distinct_products
+FROM customers cu
+JOIN sales s ON s.customerid = cu.customerid
+GROUP BY cu.customerid, cu.firstname, cu.lastname
+ORDER BY distinct_products DESC
+LIMIT 10;
