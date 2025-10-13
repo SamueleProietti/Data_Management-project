@@ -1,0 +1,44 @@
+Q9) Top 10 employees by distinct products sold in Cereals category
+
+MongoDB->
+db.sales_flat3.aggregate([
+  { $match: { "Product.CategoryName": "Cereals" } },
+  { $group: {
+      _id: { id: "$Employee.EmployeeID", first: "$Employee.FirstName", last: "$Employee.LastName" },
+      products: { $addToSet: "$Product.ProductID" }
+  }},
+  { $project: {
+      EmployeeID: "$_id.id", FirstName: "$_id.first", LastName: "$_id.last",
+      distinct_products: { $size: "$products" }, _id: 0
+  }},
+  { $sort: { distinct_products: -1, EmployeeID: 1 } },
+  { $limit: 10 }
+])
+
+PostgreSQL->
+SELECT e.employeeid, e.firstname, e.lastname,
+       COUNT(DISTINCT s.productid) AS distinct_products
+FROM sales s
+JOIN products   p  ON p.productid   = s.productid
+JOIN categories ca ON ca.categoryid = p.categoryid
+JOIN employees  e  ON e.employeeid  = s.salespersonid
+WHERE ca.categoryname = 'Cereals'
+GROUP BY e.employeeid, e.firstname, e.lastname
+ORDER BY distinct_products DESC, e.employeeid
+LIMIT 10
+----------------------------------------------------------------------------------
+
+Q12) Number of sales of Scampi Tail for each city
+
+MongoDB->
+db.sales_flat3.aggregate([
+  { "$match": { "Product.ProductName": "Scampi Tail" } },
+  { "$group": { "_id": "$Customer.CityName", "total": { "$sum": 1 } } },
+  { "$project": { "city": "$_id", "total": 1, "_id": 0 } }
+])
+
+PostgreSQL->
+select ci.cityname, count(*)
+from products p join sales s on s.productid=p.productid join customers c on s.customerid=c.customerid join cities ci on c.cityid=ci.cityid  
+where p.productname='Scampi Tail'
+group by ci.cityname
